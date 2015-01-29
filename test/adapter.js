@@ -1,7 +1,7 @@
 'use strict'
 
 var assert = require('assert')
-var Promise = require('./PromiseImpl')
+var Promise = require('../src').Promise
 
 module.exports = {
   deferred: function () {
