@@ -393,6 +393,11 @@ function Append(reactions, node) {
 		reactions.tail.next = node
 	}
 	reactions.tail = node
+	// var count = 0, node = reactions.next
+	// while (node = node.next) count++
+	// if (count > 0 && count % 100 === 0) console.log(count)
+	// var node = reactions.next, count = 0
+	// while (node = node.next) console.log(count++, node)
 }
 
 
