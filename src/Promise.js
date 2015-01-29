@@ -76,10 +76,10 @@ function ResolvePromise(promise, resolution) {
 	}
 
 	// Optimize memory usage for chained promises
-	/*if (IsPromise(resolution)) {
-		ChainPromise(promise, resolution)
-		return
-	}*/
+	// if (IsPromise(resolution)) {
+	// 	ChainPromise(promise, resolution)
+	// 	return
+	// }
 
 	var then
 	try {
@@ -110,25 +110,25 @@ function ResolvePromise(promise, resolution) {
 function ChainPromise(promise, resolution) {
 	switch (resolution[State]) {
 		case FULFILLED:
-			if (resolution[FulfillReactions] === undefined) {
+			// if (resolution[FulfillReactions] === undefined) {
 				FulfillPromise(promise, resolution[Result])
-			} else {
-				promise[Resolved] = resolution
-				append(resolution[FulfillReactions], promise[FulfillReactions])
-			}
+			// } else {
+			// 	promise[Resolved] = resolution
+			// 	Append(resolution[FulfillReactions], promise[FulfillReactions])
+			// }
 			break
 		case REJECTED:
-			if (resolution[RejectReactions] === undefined) {
+			// if (resolution[RejectReactions] === undefined) {
 				RejectPromise(promise, resolution[Result])
-			} else {
-				promise[Resolved] = resolution
-				append(resolution[RejectReactions], promise[RejectReactions])
-			}
+			// } else {
+			// 	promise[Resolved] = resolution
+			// 	Append(resolution[RejectReactions], promise[RejectReactions])
+			// }
 			break
 		default:
 			promise[Resolved] = resolution
-			append(resolution[FulfillReactions], promise[FulfillReactions])
-			append(resolution[RejectReactions], promise[RejectReactions])
+			Append(resolution[FulfillReactions], promise[FulfillReactions])
+			Append(resolution[RejectReactions], promise[RejectReactions])
 			break
 	}
 }
@@ -185,14 +185,14 @@ function RejectPromise(promise, reason) {
 // [25.4.1.9](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-triggerpromisereactions)
 function TriggerPromiseReactions(reactions, argument) {
 	// 25.4.2.1 PromiseReactionJob ( reaction, argument )
-	var reaction = reactions
 	promiseJobs.enqueue(
 		function PromiseReactionsJob() {
 			var reaction = reactions.next
 			while (reaction !== undefined) {
 				var next = reaction.next
 				reaction.next = undefined
-				reaction(argument)
+				if (reaction.tail) reaction.tail = undefined // for ChainPromise
+				else reaction(argument)
 				reaction = next
 			}
 		}
@@ -372,10 +372,8 @@ Promise.prototype.then = function then(onFulfilled, onRejected) {
 			})
 			break
 		default:
-			//console.log('then', onFulfilled.name, onRejected.name)
 			Append(promise[FulfillReactions],
 				function (r) {
-					//console.log('fuifill', onFulfilled)
 					settle(resolve, reject, onFulfilled, r)
 				})
 			Append(promise[RejectReactions],
@@ -390,7 +388,6 @@ Promise.prototype.then = function then(onFulfilled, onRejected) {
 
 function Append(reactions, node) {
 	if (!reactions.next) reactions.next = node
-	//if (reactions.tail && reactions.tail.next) node.next = reactions.tail.next
 	if (reactions.tail) {
 		if (reactions.tail.next) node.next = reactions.tail.next
 		reactions.tail.next = node
