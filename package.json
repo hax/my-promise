@@ -4,7 +4,8 @@
   "description": "My ES6 Promise Implementation",
   "main": "src/index.js",
   "scripts": {
-    "test": "promises-aplus-tests test/adapter && promises-es6-tests test/adapter"
+    "test": "promises-aplus-tests test/adapter && promises-es6-tests test/adapter && npm run test-yaku",
+    "test-yaku": "mocha -u tdd test/yaku-tests"
   },
   "repository": {
     "type": "git",
