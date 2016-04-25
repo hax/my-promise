@@ -2,8 +2,9 @@
 
 
 var spec = require('./spec')
+var global = require('./global')
 var TypeIsObject = spec.TypeIsObject,
-	WellKnownSymbol = spec.defineSymbol(this.Symbol).WellKnownSymbol,
+	WellKnownSymbol = spec.defineSymbol(global.Symbol).WellKnownSymbol,
 	IsCallable = spec.IsCallable,
 	IsConstructor = spec.IsConstructor,
 	Call = spec.Call,
