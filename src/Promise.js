@@ -419,19 +419,33 @@ Object.defineProperty(Promise.prototype, WellKnownSymbol('toStringTag'), {
 })
 
 
+var ArrayIterator = Array.prototype[WellKnownSymbol('iterator')]
+
 function Iterate(iterable, f) {
 
 	var method = iterable[WellKnownSymbol('iterator')]
 
-	if (method == null) {
-		if (iterable.length === undefined) throw new TypeError
+	// optimize for Array
+	if (method === ArrayIterator && Array.isArray(iterable)) {
 		for (var i = 0; i < iterable.length; i++) f(iterable[i])
 		return
 	}
 
-	var iterator = method()
+	if (method == null) throw new TypeError
+
+	var iterator = iterable[WellKnownSymbol('iterator')]()
 	if (!TypeIsObject(iterator)) throw new TypeError
-	var result
-	while (!(result = iterator.next()).done) f(result.value)
+
+	try {
+		var result
+		while (!(result = iterator.next()).done) {
+			f(result.value)
+		}
+	} finally {
+		if (iterator.return !== undefined) {
+			var r = iterator.return()
+			if (r == null || typeof r !== 'object') throw new TypeError
+		}
+	}
 
 }
