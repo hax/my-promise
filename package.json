@@ -24,9 +24,8 @@
   },
   "homepage": "https://github.com/hax/my-promise",
   "devDependencies": {
-    "mocha": "^2.1.0",
-    "promises-aplus-tests": "^2.1.0",
-    "promises-es6-tests": "^0.5.0",
-    "v8-natives": "0.0.1"
+    "mocha": "^2.4.5",
+    "promises-aplus-tests": "^2.1.1",
+    "promises-es6-tests": "^0.5.0"
   }
 }
